@@ -5,12 +5,14 @@ package com.thelastcouncil.lolfiend;
  */
 public class RiotGamesAPI {
 
-    public static String querySummonerName(String name, String region) {
-        return "http://";
+    public static String querySummonerName(String names, String region) {
+        return "http://" + region + BASE_QUERY_URL + region + "/v1.4/summoner/by-name/" + names + API_KEY;
     }
 
     //Base query url
-    private static final String BASE_QUERY_URL = "";
+    private static final String BASE_QUERY_URL = ".api.pvp.net/api/lol/";
+    //API Key
+    private static final String API_KEY = "?api_key=1d1d396d-999b-49cd-b992-5f1515e42b81";
 
     //Regions
     public class Region {
