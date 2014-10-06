@@ -3,12 +3,14 @@ package com.thelastcouncil.lolfiend;
 /**
  * Created by Raff on 10/5/2014.
  */
-public class RiotConstant {
+public class RiotGamesAPI {
 
-    //Query types
-    public class QueryType {
-        //TODO finish creating query constants.
+    public static String querySummonerName(String name, String region) {
+        return "http://";
     }
+
+    //Base query url
+    private static final String BASE_QUERY_URL = "";
 
     //Regions
     public class Region {
