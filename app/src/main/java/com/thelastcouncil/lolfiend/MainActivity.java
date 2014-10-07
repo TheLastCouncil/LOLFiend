@@ -8,6 +8,7 @@ import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,19 @@ import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.ResponseHandlerInterface;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
 
 
 public class MainActivity extends Activity implements View.OnClickListener, TextView.OnKeyListener, TextWatcher {
@@ -66,12 +80,16 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         switch(view.getId()) {
 
             case R.id.bSearch:
-                Toast.makeText(getApplicationContext(),"Feature not implemented.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Searching..", Toast.LENGTH_SHORT).show();
+
+                String names = etSearch.getText().toString().replaceAll("\\s", "");
 
                 //Remove current search bar's text and disable search button upon search.
                 etSearch.setText("");
                 bSearch.setEnabled(false);
-                querySearch();
+                etSearch.setEnabled(false);
+                Log.d("LOLFiend", "Query URL: " + RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
+                querySearch(RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
         }
     }
 
@@ -80,18 +98,41 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
             Toast.makeText(getApplicationContext(),"Feature not implemented.", Toast.LENGTH_SHORT).show();
 
+            String names = etSearch.getText().toString();
+
             //Remove current search bar's text and disable search button upon search.
             etSearch.setText("");
             bSearch.setEnabled(false);
-
-            querySearch();
+            etSearch.setEnabled(false);
+            //Log.d("LOLFiend", "Query URL: " + RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
+            querySearch(RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
         }
 
         return false;
     }
 
-    private void querySearch() {
-        //TODO: implement querySearch()
+    private void querySearch(String searchString) {
+
+        //Instantiating client for search networking.
+        AsyncHttpClient client = new AsyncHttpClient();
+
+        //Retrieve a JSONArray of data.
+        client.get(searchString, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Toast.makeText(getApplicationContext(),"Query search was successful.", Toast.LENGTH_SHORT).show();
+                Log.d("LOLFiend", response.toString());
+                etSearch.setEnabled(true);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
+
+                Toast.makeText(getApplicationContext(), "The search has failed.", Toast.LENGTH_LONG).show();
+                Log.d("LOLFiend", e.getMessage());
+                etSearch.setEnabled(true);
+            }
+        });
     }
 
 

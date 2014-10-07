@@ -6,7 +6,7 @@ package com.thelastcouncil.lolfiend;
 public class RiotGamesAPI {
 
     public static String querySummonerName(String names, String region) {
-        return "http://" + region + BASE_QUERY_URL + region + "/v1.4/summoner/by-name/" + names + API_KEY;
+        return "https://" + region + BASE_QUERY_URL + region + "/v1.4/summoner/by-name/" + names + API_KEY;
     }
 
     //Base query url

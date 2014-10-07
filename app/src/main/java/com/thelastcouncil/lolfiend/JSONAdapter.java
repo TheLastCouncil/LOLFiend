@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 
@@ -51,9 +52,22 @@ public class JSONAdapter extends BaseAdapter{
         //Check if the view already exists
         //If so, don't inflate again
         if(view == null) {
-            view = inflater.
+            //Inflate custom search results XML layout.
+            view = inflater.inflate(R.layout.search_results, null);
+
+            //Create new holder with sub-views.
+            holder = new ViewHolder();
+            holder.name =
+
         }
 
         return view;
+    }
+
+    private static class ViewHolder {
+        public TextView tvResultSummonerName;
+        public TextView tvResultSummonerLevel;
+        public TextView tvResultSummonerRank;
+        public TextView tvResultSummonerLP;
     }
 }
