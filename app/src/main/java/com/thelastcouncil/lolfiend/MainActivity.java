@@ -13,8 +13,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,16 +34,25 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.List;
 
 
-public class MainActivity extends Activity implements View.OnClickListener, TextView.OnKeyListener, TextWatcher {
+public class MainActivity extends Activity implements View.OnClickListener, TextView.OnKeyListener, TextWatcher, AdapterView.OnItemClickListener {
 
     EditText etSearch;
     Button bSearch;
+    ListView lvSearchResults;
+    JSONAdapter jsonAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Add spinning progress bar.
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+        setProgressBarIndeterminateVisibility(false);
+
+        //Setting initial content view to main XML.
         setContentView(R.layout.activity_main);
 
         //Set up the search TextView.
@@ -51,6 +63,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         //Set up search button.
         bSearch = (Button) findViewById(R.id.bSearch);
         bSearch.setOnClickListener(this);
+
+        lvSearchResults = (ListView) findViewById(R.id.lvSearchResults);
+        lvSearchResults.setOnItemClickListener(this);
+
+        jsonAdapter = new JSONAdapter(this, getLayoutInflater());
+        lvSearchResults.setAdapter(jsonAdapter);
     }
 
 
@@ -82,13 +100,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
             case R.id.bSearch:
                 Toast.makeText(getApplicationContext(),"Searching..", Toast.LENGTH_SHORT).show();
 
-                String names = etSearch.getText().toString().replaceAll("\\s", "");
+                String names = etSearch.getText().toString();
 
                 //Remove current search bar's text and disable search button upon search.
                 etSearch.setText("");
                 bSearch.setEnabled(false);
                 etSearch.setEnabled(false);
-                Log.d("LOLFiend", "Query URL: " + RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
+                //Log.d("LOLFiend", "Query URL: " + RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
                 querySearch(RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
         }
     }
@@ -96,7 +114,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
     @Override
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
         if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
-            Toast.makeText(getApplicationContext(),"Feature not implemented.", Toast.LENGTH_SHORT).show();
 
             String names = etSearch.getText().toString();
 
@@ -116,18 +133,33 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         //Instantiating client for search networking.
         AsyncHttpClient client = new AsyncHttpClient();
 
+        //Make the progress bar visible
+        setProgressBarIndeterminateVisibility(true);
+
         //Retrieve a JSONArray of data.
         client.get(searchString, new JsonHttpResponseHandler() {
+
             @Override
             public void onSuccess(JSONObject response) {
+
+                //Make the progress bar invisible
+                setProgressBarIndeterminateVisibility(false);
+
+                //Display Toast message.
                 Toast.makeText(getApplicationContext(),"Query search was successful.", Toast.LENGTH_SHORT).show();
                 Log.d("LOLFiend", response.toString());
                 etSearch.setEnabled(true);
+
+                jsonAdapter.updateData(response.optJSONArray("takaxiii"));
             }
 
             @Override
             public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
 
+                //Make the progress bar invisible
+                setProgressBarIndeterminateVisibility(false);
+
+                //Display Toast message.
                 Toast.makeText(getApplicationContext(), "The search has failed.", Toast.LENGTH_LONG).show();
                 Log.d("LOLFiend", e.getMessage());
                 etSearch.setEnabled(true);
@@ -155,5 +187,10 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
             bSearch.setEnabled(false);
         else
             bSearch.setEnabled(true);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
     }
 }

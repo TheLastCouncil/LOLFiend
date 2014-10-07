@@ -1,11 +1,23 @@
 package com.thelastcouncil.lolfiend;
 
+import android.util.Log;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /**
  * Created by Raff on 10/5/2014.
  */
 public class RiotGamesAPI {
 
     public static String querySummonerName(String names, String region) {
+
+        try {
+            names = URLEncoder.encode(names.trim(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            Log.d("LOLFiend", e.getMessage());
+        }
         return "https://" + region + BASE_QUERY_URL + region + "/v1.4/summoner/by-name/" + names + API_KEY;
     }
 
