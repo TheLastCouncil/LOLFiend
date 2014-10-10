@@ -1,12 +1,8 @@
 package com.thelastcouncil.lolfiend;
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -18,23 +14,13 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.ResponseHandlerInterface;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.util.List;
 
 
 public class MainActivity extends Activity implements View.OnClickListener, TextView.OnKeyListener, TextWatcher, AdapterView.OnItemClickListener {
@@ -42,7 +28,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
     EditText etSearch;
     Button bSearch;
     ListView lvSearchResults;
-    JSONAdapter jsonAdapter;
+    JSONHandler jsonHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +53,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         lvSearchResults = (ListView) findViewById(R.id.lvSearchResults);
         lvSearchResults.setOnItemClickListener(this);
 
-        jsonAdapter = new JSONAdapter(this, getLayoutInflater());
-        lvSearchResults.setAdapter(jsonAdapter);
     }
 
 
@@ -136,7 +120,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         //Make the progress bar visible
         setProgressBarIndeterminateVisibility(true);
 
-        //Retrieve a JSONArray of data.
+        //Retrieve a JSONObject of data.
         client.get(searchString, new JsonHttpResponseHandler() {
 
             @Override
@@ -145,12 +129,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
                 //Make the progress bar invisible
                 setProgressBarIndeterminateVisibility(false);
 
-                //Display Toast message.
+                //Display Toast message.d
                 Toast.makeText(getApplicationContext(),"Query search was successful.", Toast.LENGTH_SHORT).show();
                 Log.d("LOLFiend", response.toString());
                 etSearch.setEnabled(true);
 
-                jsonAdapter.updateData(response.optJSONArray("takaxiii"));
+                //TODO: inputting the JSONARRAY from query.
             }
 
             @Override
