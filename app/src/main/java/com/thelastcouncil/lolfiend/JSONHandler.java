@@ -1,9 +1,15 @@
 package com.thelastcouncil.lolfiend;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -11,20 +17,70 @@ import org.json.JSONObject;
  */
 public class JSONHandler {
 
-    JSONArray jsonArray;
+    JSONObject jsonObject;
     Summoner summoner;
 
     public JSONHandler(JSONObject jsonObject) {
-        jsonArray = jsonObject.optJSONArray();
+
+        JSONArray array = jsonObject.names();
+
+        JSONObject object = jsonObject.optJSONObject(array.optString(0));
+
+        summoner = new Summoner(object.optString("name"));
+
+        summoner.setID(object.optInt("id"));
+        RiotGamesAPI.logInfo("ID: " + summoner.getID());
+
+        summoner.setLevel(object.optInt("summonerLevel"));
+        RiotGamesAPI.logInfo("Level: " + summoner.getLevel());
+
+        summoner.setProfileIconID(object.optInt("profileIconId"));
+        RiotGamesAPI.logInfo("Profile Icon ID: " + summoner.getProfileIconID());
+
+        retrieveMoreData(RiotGamesAPI.querySummonerInfo(summoner.getID(), RiotGamesAPI.Region.REGION_NA));
+        MainActivity.summonerAdapter.updateData(MainActivity.summonerList);
     }
 
-    //Retrieve the summoner name for JSONArray conversion.
-    private void calculateName(JSONObject jsonObject) {
-        JSONArray ja = jsonObject.names();
-        //TODO: continue with mapped pseudocode..
+    public void setObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
     }
 
-    private void convertToSumoner() {
-        jsonObject.opt
+    public Summoner getSummoner() {
+        return summoner;
+    }
+
+    private void retrieveMoreData(String searchString) {
+
+        MainActivity.client.get(searchString, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(JSONObject response) {
+
+                JSONArray jsonArray = response.optJSONArray("" + summoner.getID());
+
+                JSONObject summonerObject = jsonArray.optJSONObject(0);
+
+                JSONArray entriesArray = summonerObject.optJSONArray("entries");
+
+                JSONObject entries = entriesArray.optJSONObject(0);
+
+                summoner.setTier(summonerObject.optString("tier") + " " + entries.optString("division"));
+                summoner.setLP(entries.optInt("leaguePoints"));
+                summoner.setWins(entries.optInt("wins"));
+
+                RiotGamesAPI.logInfo("Tier: " + summoner.getTier());
+                RiotGamesAPI.logInfo("League Points: " + summoner.getLP());
+                RiotGamesAPI.logInfo("Wins: " + summoner.getWins());
+
+                MainActivity.summonerAdapter.updateData(MainActivity.summonerList);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
+
+                e.printStackTrace();
+                RiotGamesAPI.logInfo(e.getMessage());
+            }
+        });
     }
 }

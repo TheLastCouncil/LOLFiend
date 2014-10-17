@@ -2,6 +2,7 @@ package com.thelastcouncil.lolfiend;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -11,6 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -22,6 +25,12 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+
 
 public class MainActivity extends Activity implements View.OnClickListener, TextView.OnKeyListener, TextWatcher, AdapterView.OnItemClickListener {
 
@@ -29,6 +38,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
     Button bSearch;
     ListView lvSearchResults;
     JSONHandler jsonHandler;
+    public static AsyncHttpClient client;
+    public static SummonerAdapter summonerAdapter;
+    public static ArrayList<Summoner> summonerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +52,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
 
         //Setting initial content view to main XML.
         setContentView(R.layout.activity_main);
+
+        //Instantiating client for search networking.
+        client = new AsyncHttpClient();
 
         //Set up the search TextView.
         etSearch = (EditText) findViewById(R.id.etSearch);
@@ -53,6 +68,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         lvSearchResults = (ListView) findViewById(R.id.lvSearchResults);
         lvSearchResults.setOnItemClickListener(this);
 
+        summonerList = new ArrayList<Summoner>();
+
+        summonerAdapter = new SummonerAdapter(this, getLayoutInflater());
+
+        lvSearchResults.setAdapter(summonerAdapter);
     }
 
 
@@ -84,14 +104,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
             case R.id.bSearch:
                 Toast.makeText(getApplicationContext(),"Searching..", Toast.LENGTH_SHORT).show();
 
-                String names = etSearch.getText().toString();
+                String name = etSearch.getText().toString();
 
                 //Remove current search bar's text and disable search button upon search.
                 etSearch.setText("");
                 bSearch.setEnabled(false);
                 etSearch.setEnabled(false);
                 //Log.d("LOLFiend", "Query URL: " + RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
-                querySearch(RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
+                querySearch(RiotGamesAPI.querySummonerName(name, RiotGamesAPI.Region.REGION_NA));
         }
     }
 
@@ -99,23 +119,20 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
     public boolean onKey(View view, int i, KeyEvent keyEvent) {
         if(keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
 
-            String names = etSearch.getText().toString();
+            String name = etSearch.getText().toString();
 
             //Remove current search bar's text and disable search button upon search.
             etSearch.setText("");
             bSearch.setEnabled(false);
             etSearch.setEnabled(false);
             //Log.d("LOLFiend", "Query URL: " + RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
-            querySearch(RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
+            querySearch(RiotGamesAPI.querySummonerName(name, RiotGamesAPI.Region.REGION_NA));
         }
 
         return false;
     }
 
     private void querySearch(String searchString) {
-
-        //Instantiating client for search networking.
-        AsyncHttpClient client = new AsyncHttpClient();
 
         //Make the progress bar visible
         setProgressBarIndeterminateVisibility(true);
@@ -131,10 +148,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
 
                 //Display Toast message.d
                 Toast.makeText(getApplicationContext(),"Query search was successful.", Toast.LENGTH_SHORT).show();
-                Log.d("LOLFiend", response.toString());
                 etSearch.setEnabled(true);
 
-                //TODO: inputting the JSONARRAY from query.
+                jsonHandler = new JSONHandler(response);
+
+                summonerList.add(jsonHandler.getSummoner());
             }
 
             @Override

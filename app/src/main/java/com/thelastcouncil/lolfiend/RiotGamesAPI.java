@@ -10,15 +10,31 @@ import java.net.URLEncoder;
  */
 public class RiotGamesAPI {
 
-    public static String querySummonerName(String names, String region) {
+    public static String querySummonerName(String name, String region) {
 
         try {
-            names = URLEncoder.encode(names.trim(), "UTF-8");
+            name = URLEncoder.encode(name.replaceAll("\\s", ""), "UTF-8");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             Log.d("LOLFiend", e.getMessage());
         }
-        return "https://" + region + BASE_QUERY_URL + region + "/v1.4/summoner/by-name/" + names + API_KEY;
+        return "https://" + region + BASE_QUERY_URL + region + "/v1.4/summoner/by-name/" + name + API_KEY;
+    }
+
+    public static String querySummonerInfo(int id, String region) {
+
+        return "https://" + region + BASE_QUERY_URL + region + "/v2.4/league/by-summoner/" + id + "/entry" + API_KEY;
+    }
+
+    public static void logInfo(String string) {
+        Log.d("LOL Fiend", string);
+    }
+
+    public static String getSummonerIconURL(int summonerIconID) {
+
+        String imageURL = "http://ddragon.leagueoflegends.com/cdn/4.18.1/img/profileicon/" + summonerIconID + ".png";
+        RiotGamesAPI.logInfo("imageURL: " + imageURL);
+        return imageURL;
     }
 
     //Base query url
