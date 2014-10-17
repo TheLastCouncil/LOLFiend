@@ -1,6 +1,7 @@
 package com.thelastcouncil.lolfiend;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Editable;
@@ -17,6 +18,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,13 +36,14 @@ import java.util.ListIterator;
 
 public class MainActivity extends Activity implements View.OnClickListener, TextView.OnKeyListener, TextWatcher, AdapterView.OnItemClickListener {
 
+    public static AsyncHttpClient client;
+    public static SummonerAdapter summonerAdapter;
+    public static ArrayList<Summoner> summonerList;
+
     EditText etSearch;
     Button bSearch;
     ListView lvSearchResults;
     JSONHandler jsonHandler;
-    public static AsyncHttpClient client;
-    public static SummonerAdapter summonerAdapter;
-    public static ArrayList<Summoner> summonerList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +196,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+        Summoner summoner = (Summoner) summonerAdapter.getItem(i);
+
+        Intent profileIntent = new Intent(this, ProfileActivity.class);
+
+        profileIntent.putExtra("summoner", summoner);
+
+        startActivity(profileIntent);
 
     }
 }

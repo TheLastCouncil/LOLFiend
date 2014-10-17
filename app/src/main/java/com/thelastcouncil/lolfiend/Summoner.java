@@ -1,10 +1,13 @@
 package com.thelastcouncil.lolfiend;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Raff on 10/8/2014.
  */
 
-public class Summoner {
+public class Summoner implements Parcelable{
     private int id;
     private String region;
     private String name;
@@ -24,6 +27,21 @@ public class Summoner {
         this.tier = "Unranked";
         this.lp = 0;
         this.wins = 0;
+    }
+
+    public Summoner (Parcel in) {
+        String[] data = new String[9];
+        in.readStringArray(data);
+
+        this.id = Integer.parseInt(data[0]);
+        this.region = data[1];
+        this.name = data[2];
+        this.level = Integer.parseInt(data[3]);
+        this.profileIconID = Integer.parseInt(data[4]);
+        this.league = data[5];
+        this.tier = data[6];
+        this.lp = Integer.parseInt(data[7]);
+        this.wins = Integer.parseInt(data[8]);
     }
 
     public void setID(int id) {
@@ -91,4 +109,37 @@ public class Summoner {
     public void setWins(int wins) {
         this.wins = wins;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeStringArray(new String[]{
+                String.valueOf(this.id),
+                this.region,
+                this.name,
+                String.valueOf(this.level),
+                String.valueOf(this.profileIconID),
+                this.league,
+                this.tier,
+                String.valueOf(this.lp),
+                String.valueOf(this.wins)
+        });
+    }
+
+    public static final Creator<Summoner> CREATOR = new Creator<Summoner>() {
+
+        @Override
+        public Summoner createFromParcel(Parcel parcel) {
+            return new Summoner(parcel);
+        }
+
+        @Override
+        public Summoner[] newArray(int i) {
+            return new Summoner[i];
+        }
+    };
 }

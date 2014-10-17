@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:textAlignment="center"
+    android:orientation="vertical"
+    android:background="#F2E4C7">
+
+    <ImageView
+        android:id="@+id/ivProfileIcon"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/default_icon"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/tvProfileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivProfileIcon"
+        android:layout_marginTop="20dp"
+        android:text="Sergeant Ducks"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/tvProfileLevel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_below="@id/tvProfileName"
+        android:text="Level 30"
+        android:textSize="18sp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/tvProfileTier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_below="@id/tvProfileLevel"
+        android:text="Platinum III"
+        android:textSize="20sp"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:id="@+id/tvProfileLP"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_below="@id/tvProfileTier"
+        android:text="100 League Points"
+        android:textSize="16sp"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
