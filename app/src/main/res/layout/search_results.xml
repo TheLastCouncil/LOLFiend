@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="10dp"
-    android:background="@android:drawable/bottom_bar">
+    android:background="@android:drawable/btn_default_small">
 
     <ImageView
         android:id="@+id/ivResultSummonerIcon"
@@ -13,11 +13,12 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_marginStart="10dp"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:src="@drawable/default_icon"/>
 
     <TextView
         android:id="@+id/tvResultSummonerName"
-        android:text="Sergeant Ducks"
+        android:text="@string/example_name"
         android:textSize="22sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,7 +30,7 @@
 
     <TextView
         android:id="@+id/tvResultSummonerLevel"
-        android:text="Level 30"
+        android:text="@string/example_level"
         android:textSize="14sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,7 +43,7 @@
     
     <TextView
         android:id="@+id/tvResultSummonerTier"
-        android:text="Platinum IV"
+        android:text="@string/example_tier"
         android:textSize="18sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

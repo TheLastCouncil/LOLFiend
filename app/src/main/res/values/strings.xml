@@ -5,6 +5,14 @@
     <string name="search_bar_text">Summoner search..</string>
     <string name="search_button_text">Search</string>
     <string name="action_exit">Exit</string>
+    <string name="action_favorites">Favorites</string>
+
+    <string name="example_name">Sergeant Ducks</string>
+    <string name="example_level">Level 30</string>
+    <string name="example_tier">Platinum III</string>
+    <string name="example_LP">100 League Points</string>
+
+    <string name="latest_match">Latest Match:</string>
 
 
 </resources>

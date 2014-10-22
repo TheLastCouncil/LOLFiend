@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.apache.http.Header;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -78,7 +79,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         lvSearchResults.setAdapter(summonerAdapter);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -93,11 +93,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_exit) {
+        switch(id) {
+            case R.id.action_exit :
+                return true;
 
-            return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -113,7 +115,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
                 etSearch.setText("");
                 bSearch.setEnabled(false);
                 etSearch.setEnabled(false);
-                //Log.d("LOLFiend", "Query URL: " + RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
                 querySearch(RiotGamesAPI.querySummonerName(name, RiotGamesAPI.Region.REGION_NA));
         }
     }
@@ -128,7 +129,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
             etSearch.setText("");
             bSearch.setEnabled(false);
             etSearch.setEnabled(false);
-            //Log.d("LOLFiend", "Query URL: " + RiotGamesAPI.querySummonerName(names, RiotGamesAPI.Region.REGION_NA));
             querySearch(RiotGamesAPI.querySummonerName(name, RiotGamesAPI.Region.REGION_NA));
         }
 
@@ -137,8 +137,8 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
 
     private void querySearch(String searchString) {
 
-        //Make the progress bar visible
         setProgressBarIndeterminateVisibility(true);
+        etSearch.setEnabled(false);
 
         //Retrieve a JSONObject of data.
         client.get(searchString, new JsonHttpResponseHandler() {
@@ -146,29 +146,42 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
             @Override
             public void onSuccess(JSONObject response) {
 
-                //Make the progress bar invisible
-                setProgressBarIndeterminateVisibility(false);
-
                 //Display Toast message.d
                 Toast.makeText(getApplicationContext(),"Query search was successful.", Toast.LENGTH_SHORT).show();
-                etSearch.setEnabled(true);
 
                 jsonHandler = new JSONHandler(response);
 
                 summonerList.add(jsonHandler.getSummoner());
+
+                setProgressBarIndeterminateVisibility(false);
+                etSearch.setEnabled(true);
             }
 
             @Override
             public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
 
-                //Make the progress bar invisible
-                setProgressBarIndeterminateVisibility(false);
-
                 //Display Toast message.
-                Toast.makeText(getApplicationContext(), "The search has failed.", Toast.LENGTH_LONG).show();
-                Log.d("LOLFiend", e.getMessage());
+                switch (statusCode) {
+                    case 404:
+                        Toast.makeText(getApplicationContext(), "Summoner not found.", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case 429:
+                        Toast.makeText(getApplicationContext(), "Rate limit exceeded.", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case 503:
+                        Toast.makeText(getApplicationContext(), "Service is unavailable.", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    default:
+                        Toast.makeText(getApplicationContext(), "The search has failed.", Toast.LENGTH_SHORT).show();
+                }
+
                 etSearch.setEnabled(true);
+                setProgressBarIndeterminateVisibility(false);
             }
+
         });
     }
 

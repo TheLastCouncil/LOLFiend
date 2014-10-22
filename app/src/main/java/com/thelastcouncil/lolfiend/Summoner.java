@@ -17,6 +17,7 @@ public class Summoner implements Parcelable{
     private String tier;
     private int lp;
     private int wins;
+    private boolean favorite;
 
     public Summoner(String name) {
         this.id = 0;
@@ -27,6 +28,7 @@ public class Summoner implements Parcelable{
         this.tier = "Unranked";
         this.lp = 0;
         this.wins = 0;
+        this.favorite = false;
     }
 
     public Summoner (Parcel in) {
@@ -42,6 +44,7 @@ public class Summoner implements Parcelable{
         this.tier = data[6];
         this.lp = Integer.parseInt(data[7]);
         this.wins = Integer.parseInt(data[8]);
+        this.favorite = Boolean.parseBoolean(data[9]);
     }
 
     public void setID(int id) {
@@ -110,6 +113,10 @@ public class Summoner implements Parcelable{
         this.wins = wins;
     }
 
+    public boolean isFavorite() {return favorite;}
+
+    public void setFavorite(boolean favorite) {this.favorite = favorite;}
+
     @Override
     public int describeContents() {
         return 0;
@@ -126,7 +133,8 @@ public class Summoner implements Parcelable{
                 this.league,
                 this.tier,
                 String.valueOf(this.lp),
-                String.valueOf(this.wins)
+                String.valueOf(this.wins),
+                String.valueOf(this.favorite)
         });
     }
 
