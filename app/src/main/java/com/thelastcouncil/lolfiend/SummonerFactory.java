@@ -15,12 +15,12 @@ import org.json.JSONObject;
 /**
  * Created by Raff on 10/5/2014.
  */
-public class JSONHandler {
+public class SummonerFactory {
 
     JSONObject jsonObject;
     Summoner summoner;
 
-    public JSONHandler(JSONObject jsonObject) {
+    public SummonerFactory(JSONObject jsonObject) {
 
         JSONArray array = jsonObject.names();
 

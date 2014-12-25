@@ -3,6 +3,12 @@
     tools:context=".MainActivity" >
 
     <item
+        android:id="@+id/action_favorites"
+        android:title="@string/action_favorites"
+        android:orderInCategory="99"
+        android:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_exit"
         android:title="@string/action_exit"
         android:orderInCategory="100"

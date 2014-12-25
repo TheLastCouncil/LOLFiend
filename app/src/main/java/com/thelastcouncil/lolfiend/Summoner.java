@@ -3,11 +3,13 @@ package com.thelastcouncil.lolfiend;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.orm.SugarRecord;
+
 /**
  * Created by Raff on 10/8/2014.
  */
 
-public class Summoner implements Parcelable{
+public class Summoner extends SugarRecord<Summoner> implements Parcelable{
     private int id;
     private String region;
     private String name;
@@ -18,6 +20,10 @@ public class Summoner implements Parcelable{
     private int lp;
     private int wins;
     private boolean favorite;
+    private long recentMatch;
+
+    public Summoner () {
+    }
 
     public Summoner(String name) {
         this.id = 0;
@@ -29,10 +35,11 @@ public class Summoner implements Parcelable{
         this.lp = 0;
         this.wins = 0;
         this.favorite = false;
+        this.recentMatch = 0;
     }
 
     public Summoner (Parcel in) {
-        String[] data = new String[9];
+        String[] data = new String[11];
         in.readStringArray(data);
 
         this.id = Integer.parseInt(data[0]);
@@ -45,6 +52,7 @@ public class Summoner implements Parcelable{
         this.lp = Integer.parseInt(data[7]);
         this.wins = Integer.parseInt(data[8]);
         this.favorite = Boolean.parseBoolean(data[9]);
+        this.recentMatch = Long.parseLong(data[10]);
     }
 
     public void setID(int id) {
@@ -134,7 +142,8 @@ public class Summoner implements Parcelable{
                 this.tier,
                 String.valueOf(this.lp),
                 String.valueOf(this.wins),
-                String.valueOf(this.favorite)
+                String.valueOf(this.favorite),
+                String.valueOf(this.recentMatch)
         });
     }
 
@@ -150,4 +159,12 @@ public class Summoner implements Parcelable{
             return new Summoner[i];
         }
     };
+
+    public long getRecentMatch() {
+        return recentMatch;
+    }
+
+    public void setRecentMatch(long recentMatch) {
+        this.recentMatch = recentMatch;
+    }
 }

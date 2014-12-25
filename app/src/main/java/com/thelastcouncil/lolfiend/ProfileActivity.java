@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,10 +13,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.impl.cookie.BestMatchSpecFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -62,6 +65,10 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
         TextView tvProfileTier = (TextView) findViewById(R.id.tvProfileTier);
         TextView tvProfileLP = (TextView) findViewById(R.id.tvProfileLP);
 
+        //Retrieving the Parcelable summmoner object sent from the previous Intent.
+        summoner = getIntent().getParcelableExtra("summoner");
+        getActionBar().setTitle(summoner.getName());
+
         //Setting the state of the favorite button depending on the summoner
         ibFavoriteButton = (ImageButton) findViewById(R.id.ibFavoriteButton);
         if(summoner.isFavorite())
@@ -71,12 +78,6 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
 
         ibFavoriteButton.setOnClickListener(this);
 
-        //Retrieving the Parcelable summmoner object sent from the previous Intent.
-        summoner = getIntent().getParcelableExtra("summoner");
-        getActionBar().setTitle(summoner.getName());
-
-        //Instantiate the latestsMatch object.
-        latestMatch = new Match();
 
         //Using Picasso to load the summoner icon.
         Picasso.with(this).load(RiotGamesAPI.getSummonerIconURL(summoner.getProfileIconID())).into(ivProfileIcon);
@@ -86,8 +87,9 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
         tvProfileLP.setText(summoner.getLP() + " League Points");
 
         //Custom method used to populate the recent match content.
-        populateLatestMatch();
-
+        //populateLatestMatch();
+        MatchFactory  matchFactory = new MatchFactory(summoner.getID());
+        latestMatch = matchFactory.getMatch();
     }
 
     private void populateLatestMatch() {
@@ -106,6 +108,7 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
 
                 //Initializing the latestMatch object with the response information.
                 latestMatch.setGameID(latestGame.optLong("gameId"));
+                summoner.setRecentMatch(latestMatch.getGameID());
                 RiotGamesAPI.logInfo("Game ID: " + latestMatch.getGameID());
                 latestMatch.setCreateDate(latestGame.optLong("createDate"));
                 RiotGamesAPI.logInfo("create Date: " + latestMatch.getCreateDate());
@@ -263,14 +266,13 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ibFavoriteButton:
-                if(summoner.isFavorite())
+                if(summoner.isFavorite()) {
                     ibFavoriteButton.setImageResource(android.R.drawable.btn_star_big_off);
-                else {
+                    toggleFavorite();
+                } else {
                     ibFavoriteButton.setImageResource(android.R.drawable.btn_star_big_on);
                     toggleFavorite();
                 }
-
-                toggleFavorite();
                 break;
 
             default:
@@ -279,8 +281,18 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
     }
 
     private void toggleFavorite() {
-
-        summoner.setFavorite(true);
-        //TODO: Implement adding summoner to Favorites list. (After SQLite implementation)
+        try {
+            if (summoner.isFavorite()) {
+                summoner.setFavorite(false);
+                summoner.delete();
+            } else {
+                summoner.setFavorite(true);
+                summoner.save();
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            Log.e("LOL Fiend", e.getMessage());
+            Toast.makeText(this, "That didn't work.", Toast.LENGTH_SHORT).show();
+        }
     }
 }

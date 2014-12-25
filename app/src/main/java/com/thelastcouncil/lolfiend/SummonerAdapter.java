@@ -25,12 +25,14 @@ public class SummonerAdapter extends BaseAdapter {
     Context context;
     LayoutInflater inflater;
     ArrayList<Summoner> summoners;
+    int layout;
 
 
-    public SummonerAdapter(Context context, LayoutInflater li) {
+    public SummonerAdapter(Context context, LayoutInflater li, int layout) {
         this.context = context;
         inflater = li;
         summoners = new ArrayList<Summoner>();
+        this.layout = layout;
     }
 
     public void updateData(ArrayList<Summoner> summoners) {
@@ -59,7 +61,7 @@ public class SummonerAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if(convertView == null) {
-            convertView = inflater.inflate(R.layout.search_results, null);
+            convertView = inflater.inflate(layout, null);
 
             //Create new holder summoner.
             holder = new ViewHolder();

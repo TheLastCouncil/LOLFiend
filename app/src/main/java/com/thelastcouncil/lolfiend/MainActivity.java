@@ -3,36 +3,26 @@ package com.thelastcouncil.lolfiend;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
-import org.apache.http.Header;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
 
 
 public class MainActivity extends Activity implements View.OnClickListener, TextView.OnKeyListener, TextWatcher, AdapterView.OnItemClickListener {
@@ -44,7 +34,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
     EditText etSearch;
     Button bSearch;
     ListView lvSearchResults;
-    JSONHandler jsonHandler;
+    SummonerFactory summonerFactory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +64,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
 
         summonerList = new ArrayList<Summoner>();
 
-        summonerAdapter = new SummonerAdapter(this, getLayoutInflater());
+        summonerAdapter = new SummonerAdapter(this, getLayoutInflater(), R.layout.search_results);
 
         lvSearchResults.setAdapter(summonerAdapter);
     }
@@ -95,6 +85,12 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         int id = item.getItemId();
         switch(id) {
             case R.id.action_exit :
+                return true;
+
+            case R.id.action_favorites:
+                Intent favoritesIntent = new Intent();
+                favoritesIntent.setClass(this, FavoritesActivity.class);
+                startActivity(favoritesIntent);
                 return true;
 
             default:
@@ -149,9 +145,9 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
                 //Display Toast message.d
                 Toast.makeText(getApplicationContext(),"Query search was successful.", Toast.LENGTH_SHORT).show();
 
-                jsonHandler = new JSONHandler(response);
+                summonerFactory = new SummonerFactory(response);
 
-                summonerList.add(jsonHandler.getSummoner());
+                summonerList.add(summonerFactory.getSummoner());
 
                 setProgressBarIndeterminateVisibility(false);
                 etSearch.setEnabled(true);
@@ -217,6 +213,5 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         profileIntent.putExtra("summoner", summoner);
 
         startActivity(profileIntent);
-
     }
 }

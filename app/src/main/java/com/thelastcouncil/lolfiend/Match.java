@@ -1,9 +1,16 @@
 package com.thelastcouncil.lolfiend;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.orm.SugarRecord;
+
+import java.util.ArrayList;
+
 /**
  * Created by Raff on 10/18/2014.
  */
-public class Match {
+public class Match extends SugarRecord<Match> implements Parcelable{
 
     //Match information
     private long gameID;
@@ -14,6 +21,7 @@ public class Match {
 
     //Match summoner information
     private boolean win;
+    private long summonerID;
     private int championID,
                 level,
                 assists,
@@ -22,13 +30,14 @@ public class Match {
                 gold,
                 minions;
 
-    public Match () {
+    public Match (long gameID) {
         this.gameID = 0;
         this.createDate = 0;
         this.summonerSpell1 = 0;
         this.summonerSpell2 = 0;
         this.subType = "Loading";
         this.win = true;
+        this.summonerID = 0;
         this.championID = 0;
         this.level = 0;
         this.assists = 0;
@@ -36,6 +45,26 @@ public class Match {
         this.deaths = 0;
         this.gold = 0;
         this.minions = 0;
+    }
+
+    public Match(Parcel parcel) {
+        String[] data = new String[14];
+        parcel.readStringArray(data);
+
+        this.gameID = Long.parseLong(data[0]);
+        this.createDate = Long.parseLong(data[1]);
+        this.summonerSpell1 = Integer.parseInt(data[2]);
+        this.summonerSpell2 = Integer.parseInt(data[3]);
+        this.subType = data[4];
+        this.win = Boolean.parseBoolean(data[5]);
+        this.summonerID = Integer.parseInt(data[6]);
+        this.championID = Integer.parseInt(data[7]);
+        this.level = Integer.parseInt(data[8]);
+        this.assists = Integer.parseInt(data[9]);
+        this.kills = Integer.parseInt(data[10]);
+        this.deaths = Integer.parseInt(data[11]);
+        this.gold = Integer.parseInt(data[12]);
+        this.minions = Integer.parseInt(data[13]);
     }
 
     public long getGameID() {
@@ -140,5 +169,51 @@ public class Match {
 
     public void setChampionID(int championID) {
         this.championID = championID;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeStringArray(new String[]{
+                String.valueOf(this.gameID),
+                String.valueOf(createDate),
+                String.valueOf(summonerSpell1),
+                String.valueOf(summonerSpell2),
+                subType,
+                String.valueOf(win),
+                String.valueOf(summonerID),
+                String.valueOf(championID),
+                String.valueOf(level),
+                String.valueOf(assists),
+                String.valueOf(kills),
+                String.valueOf(deaths),
+                String.valueOf(gold),
+                String.valueOf(minions)
+        });
+    }
+
+    public static final Creator<Match> CREATOR = new Creator<Match>() {
+
+        @Override
+        public Match createFromParcel(Parcel parcel) {
+            return new Match(parcel);
+        }
+
+        @Override
+        public Match[] newArray(int i) {
+            return new Match[i];
+        }
+    };
+
+    public long getSummonerID() {
+        return summonerID;
+    }
+
+    public void setSummonerID(long summonerID) {
+        this.summonerID = summonerID;
     }
 }
