@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +55,7 @@ public class SummonerFactory {
         MainActivity.client.get(searchString, new JsonHttpResponseHandler() {
 
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
                 JSONArray jsonArray = response.optJSONArray("" + summoner.getID());
 
@@ -76,10 +77,10 @@ public class SummonerFactory {
             }
 
             @Override
-            public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                e.printStackTrace();
-                RiotGamesAPI.logInfo(e.getMessage());
+                throwable.printStackTrace();
+                RiotGamesAPI.logInfo(throwable.getMessage());
             }
         });
     }

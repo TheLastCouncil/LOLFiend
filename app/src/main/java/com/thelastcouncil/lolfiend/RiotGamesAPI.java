@@ -27,7 +27,7 @@ public class RiotGamesAPI {
 
     public static String querySummonerInfo(int id, String region) {
 
-        return "https://" + region + BASE_QUERY_URL + region + "/v2.4/league/by-summoner/" + id + "/entry" + API_KEY;
+        return "https://" + region + BASE_QUERY_URL + region + "/v2.5/league/by-summoner/" + id + "/entry" + API_KEY;
     }
 
     public static String queryRecentGameInfo(int id, String region) {

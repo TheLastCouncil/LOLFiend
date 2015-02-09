@@ -8,6 +8,7 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,20 +42,21 @@ public class MatchFactory {
 
         MainActivity.client.get(context, RiotGamesAPI.queryRecentGameInfo(summonerId, RiotGamesAPI.Region.REGION_NA), new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
                 JSONArray games = response.optJSONArray("games");
                 JSONObject latestGame = games.optJSONObject(0);
 
                 //Initializing the match object with the response information.
-                match.setGameID(latestGame.optLong("gameId"));
+                match = new Match(latestGame.optLong("gameId"));
+
                 //TODO: summoner.setRecentMatch(match.getGameID()); after returning match!!
                 RiotGamesAPI.logInfo("Game ID: " + match.getGameID());
                 match.setCreateDate(latestGame.optLong("createDate"));
                 RiotGamesAPI.logInfo("create Date: " + match.getCreateDate());
                 match.setChampionID(latestGame.optInt("championId"));
                 RiotGamesAPI.logInfo("Champion ID: " + match.getChampionID());
-                if(latestGame.optString("subType").equalsIgnoreCase("none")) {
+                if (latestGame.optString("subType").equalsIgnoreCase("none")) {
                     match.setSubType(latestGame.optString("gameMode"));
                 } else {
                     match.setSubType(latestGame.optString("subType"));
@@ -71,12 +73,11 @@ public class MatchFactory {
                 match.setGold(player.optInt("goldEarned"));
                 match.setMinions(player.optInt("minionsKilled"));
                 match.setWin(player.optBoolean("win"));
-
             }
 
             @Override
-            public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
-                super.onFailure(statusCode, e, errorResponse);
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
             }
         });
     }

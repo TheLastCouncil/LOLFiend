@@ -20,6 +20,8 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import org.apache.http.Header;
+import org.apache.http.client.HttpResponseException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -140,7 +142,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         client.get(searchString, new JsonHttpResponseHandler() {
 
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
                 //Display Toast message.d
                 Toast.makeText(getApplicationContext(),"Query search was successful.", Toast.LENGTH_SHORT).show();
@@ -154,10 +156,11 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
             }
 
             @Override
-            public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
 
+                HttpResponseException hre = (HttpResponseException) throwable;
                 //Display Toast message.
-                switch (statusCode) {
+                switch (hre.getStatusCode()) {
                     case 404:
                         Toast.makeText(getApplicationContext(), "Summoner not found.", Toast.LENGTH_SHORT).show();
                         break;
@@ -177,7 +180,6 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
                 etSearch.setEnabled(true);
                 setProgressBarIndeterminateVisibility(false);
             }
-
         });
     }
 

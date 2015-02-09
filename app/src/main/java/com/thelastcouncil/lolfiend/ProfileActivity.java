@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.Header;
 import org.apache.http.impl.cookie.BestMatchSpecFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -88,7 +89,7 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
 
         //Custom method used to populate the recent match content.
         //populateLatestMatch();
-        MatchFactory  matchFactory = new MatchFactory(summoner.getID());
+        MatchFactory  matchFactory = new MatchFactory(getApplicationContext(), summoner.getID());
         latestMatch = matchFactory.getMatch();
     }
 
@@ -98,7 +99,7 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
         MainActivity.client.get(RiotGamesAPI.queryRecentGameInfo(summoner.getID(), RiotGamesAPI.Region.REGION_NA), new JsonHttpResponseHandler() {
 
             @Override
-            public void onSuccess(JSONObject response) {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
                 //Creating JSONObjects to represent the objects from the response.
                 JSONArray games = response.optJSONArray("games");
@@ -155,15 +156,15 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
                 MainActivity.client.get("https://" + RiotGamesAPI.Region.REGION_NA + RiotGamesAPI.BASE_QUERY_URL + "static-data/" + RiotGamesAPI.Region.REGION_NA + "/v1.2/champion/" + latestMatch.getChampionID() + RiotGamesAPI.API_KEY, new JsonHttpResponseHandler() {
 
                     @Override
-                    public void onSuccess(JSONObject response) {
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                         RiotGamesAPI.logInfo("Champion Icon URL: " + RiotGamesAPI.getChampionIconURL(response.optString("key")));
                         Picasso.with(getApplicationContext()).load(RiotGamesAPI.getChampionIconURL(response.optString("key"))).into(ivChampionIcon);
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
+                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                         RiotGamesAPI.logInfo("Fail to retrieve champion icon data.");
-                        super.onFailure(statusCode, e, errorResponse);
+                        super.onFailure(statusCode, headers, throwable, errorResponse);
                     }
                 });
 
@@ -237,10 +238,10 @@ public class ProfileActivity extends Activity implements View.OnClickListener {
             }
 
             @Override
-            public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
 
-                e.printStackTrace();
-                RiotGamesAPI.logInfo(e.getMessage());
+                throwable.printStackTrace();
+                RiotGamesAPI.logInfo(throwable.getMessage());
             }
         });
     }
