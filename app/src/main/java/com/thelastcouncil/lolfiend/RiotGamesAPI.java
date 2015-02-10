@@ -27,7 +27,7 @@ public class RiotGamesAPI {
 
     public static String querySummonerInfo(int id, String region) {
 
-        return "https://" + region + BASE_QUERY_URL + region + "/v2.4/league/by-summoner/" + id + "/entry" + API_KEY;
+        return "https://" + region + BASE_QUERY_URL + region + "/v2.5/league/by-summoner/" + id + API_KEY;
     }
 
     public static String queryRecentGameInfo(int id, String region) {
@@ -39,23 +39,28 @@ public class RiotGamesAPI {
         Log.d("LOL Fiend", string);
     }
 
+    public static String getChampionKey(int championID) {
+        String championKey = "https://" + RiotGamesAPI.Region.REGION_NA + RiotGamesAPI.BASE_QUERY_URL + "static-data/" + RiotGamesAPI.Region.REGION_NA + "/v1.2/champion/" + championID + RiotGamesAPI.API_KEY;
+        return championKey;
+    }
+
     public static String getSummonerIconURL(int summonerIconID) {
 
-        String imageURL = "http://ddragon.leagueoflegends.com/cdn/4.18.1/img/profileicon/" + summonerIconID + ".png";
+        String imageURL = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/profileicon/" + summonerIconID + ".png";
         RiotGamesAPI.logInfo("imageURL: " + imageURL);
         return imageURL;
     }
 
     public static String getChampionIconURL(String championKey) {
 
-        String imageURL = "http://ddragon.leagueoflegends.com/cdn/4.18.1/img/champion/" + championKey + ".png";
+        String imageURL = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/champion/" + championKey + ".png";
         RiotGamesAPI.logInfo("imageURL: " + imageURL);
         return imageURL;
     }
 
     public static String getSpellIconURL(String spellKey) {
 
-        String imageURL = "http://ddragon.leagueoflegends.com/cdn/4.18.1/img/spell/" + spellKey + ".png";
+        String imageURL = "http://ddragon.leagueoflegends.com/cdn/5.2.1/img/spell/" + spellKey + ".png";
         RiotGamesAPI.logInfo("imageURL: " + imageURL);
         return imageURL;
     }
@@ -63,7 +68,7 @@ public class RiotGamesAPI {
     //Base query url
     public static final String BASE_QUERY_URL = ".api.pvp.net/api/lol/";
     //API Key
-    public static final String API_KEY = "?api_key=1d1d396d-999b-49cd-b992-5f1515e42b81";
+    public static final String API_KEY = "?api_key=f276ae22-5603-4da2-8cd8-49e446d1b30a";
 
     public static String spellIDToName(int spellID) {
 

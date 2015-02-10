@@ -19,7 +19,6 @@ public class Summoner extends SugarRecord<Summoner> implements Parcelable{
     private String tier;
     private int lp;
     private int wins;
-    private boolean favorite;
     private long recentMatch;
 
     public Summoner () {
@@ -34,12 +33,11 @@ public class Summoner extends SugarRecord<Summoner> implements Parcelable{
         this.tier = "Unranked";
         this.lp = 0;
         this.wins = 0;
-        this.favorite = false;
         this.recentMatch = 0;
     }
 
     public Summoner (Parcel in) {
-        String[] data = new String[11];
+        String[] data = new String[10];
         in.readStringArray(data);
 
         this.id = Integer.parseInt(data[0]);
@@ -51,8 +49,7 @@ public class Summoner extends SugarRecord<Summoner> implements Parcelable{
         this.tier = data[6];
         this.lp = Integer.parseInt(data[7]);
         this.wins = Integer.parseInt(data[8]);
-        this.favorite = Boolean.parseBoolean(data[9]);
-        this.recentMatch = Long.parseLong(data[10]);
+        this.recentMatch = Long.parseLong(data[9]);
     }
 
     public void setID(int id) {
@@ -121,10 +118,6 @@ public class Summoner extends SugarRecord<Summoner> implements Parcelable{
         this.wins = wins;
     }
 
-    public boolean isFavorite() {return favorite;}
-
-    public void setFavorite(boolean favorite) {this.favorite = favorite;}
-
     @Override
     public int describeContents() {
         return 0;
@@ -142,7 +135,6 @@ public class Summoner extends SugarRecord<Summoner> implements Parcelable{
                 this.tier,
                 String.valueOf(this.lp),
                 String.valueOf(this.wins),
-                String.valueOf(this.favorite),
                 String.valueOf(this.recentMatch)
         });
     }

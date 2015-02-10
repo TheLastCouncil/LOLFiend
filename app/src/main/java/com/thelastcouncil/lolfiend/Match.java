@@ -31,7 +31,7 @@ public class Match extends SugarRecord<Match> implements Parcelable{
                 minions;
 
     public Match (long gameID) {
-        this.gameID = 0;
+        this.gameID = gameID;
         this.createDate = 0;
         this.summonerSpell1 = 0;
         this.summonerSpell2 = 0;
