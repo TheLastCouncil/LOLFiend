@@ -88,13 +88,13 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         switch(id) {
             case R.id.action_exit :
                 return true;
-
+            /*
             case R.id.action_favorites:
                 Intent favoritesIntent = new Intent();
                 favoritesIntent.setClass(this, FavoritesActivity.class);
                 startActivity(favoritesIntent);
                 return true;
-
+            */
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -144,7 +144,7 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
-                //Display Toast message.d
+                //Display Toast message.
                 Toast.makeText(getApplicationContext(),"Query search was successful.", Toast.LENGTH_SHORT).show();
 
                 summonerFactory = new SummonerFactory(response);
