@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * Created by Raff on 10/18/2014.
  */
-public class Match extends SugarRecord<Match> implements Parcelable{
+public class Match implements Parcelable{
 
     //Match information
     private long gameID;
@@ -21,9 +21,9 @@ public class Match extends SugarRecord<Match> implements Parcelable{
 
     //Match summoner information
     private boolean win;
-    private long summonerID;
-    private int championID,
-                level,
+    private int championID;
+    private String championName;
+    private int level,
                 assists,
                 kills,
                 deaths,
@@ -37,8 +37,8 @@ public class Match extends SugarRecord<Match> implements Parcelable{
         this.summonerSpell2 = 0;
         this.subType = "Loading";
         this.win = true;
-        this.summonerID = 0;
         this.championID = 0;
+        this.championName = "";
         this.level = 0;
         this.assists = 0;
         this.kills = 0;
@@ -57,8 +57,8 @@ public class Match extends SugarRecord<Match> implements Parcelable{
         this.summonerSpell2 = Integer.parseInt(data[3]);
         this.subType = data[4];
         this.win = Boolean.parseBoolean(data[5]);
-        this.summonerID = Integer.parseInt(data[6]);
-        this.championID = Integer.parseInt(data[7]);
+        this.championID = Integer.parseInt(data[6]);
+        this.championName = data[7];
         this.level = Integer.parseInt(data[8]);
         this.assists = Integer.parseInt(data[9]);
         this.kills = Integer.parseInt(data[10]);
@@ -171,6 +171,10 @@ public class Match extends SugarRecord<Match> implements Parcelable{
         this.championID = championID;
     }
 
+    public String getChampionName() { return championName; }
+
+    public void setChampionName(String championName) { this.championName = championName; }
+
     @Override
     public int describeContents() {
         return 0;
@@ -185,8 +189,8 @@ public class Match extends SugarRecord<Match> implements Parcelable{
                 String.valueOf(summonerSpell2),
                 subType,
                 String.valueOf(win),
-                String.valueOf(summonerID),
                 String.valueOf(championID),
+                championName,
                 String.valueOf(level),
                 String.valueOf(assists),
                 String.valueOf(kills),
@@ -208,12 +212,4 @@ public class Match extends SugarRecord<Match> implements Parcelable{
             return new Match[i];
         }
     };
-
-    public long getSummonerID() {
-        return summonerID;
-    }
-
-    public void setSummonerID(long summonerID) {
-        this.summonerID = summonerID;
-    }
 }

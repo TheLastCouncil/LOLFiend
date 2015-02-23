@@ -144,15 +144,14 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
-                //Display Toast message.
+                //Display successful message.
                 Toast.makeText(getApplicationContext(),"Query search was successful.", Toast.LENGTH_SHORT).show();
 
+                //create SummonerFactory object for Summoner object creation.
                 summonerFactory = new SummonerFactory(response);
 
-                summonerList.add(summonerFactory.getSummoner());
-
-                setProgressBarIndeterminateVisibility(false);
-                etSearch.setEnabled(true);
+                //Request detailed information regarding the summoner using it's ID.
+                detailRequest(summonerFactory.getSummoner().getID());
             }
 
             @Override
@@ -183,6 +182,38 @@ public class MainActivity extends Activity implements View.OnClickListener, Text
         });
     }
 
+    private void detailRequest(final int summonerID) {
+        client.get(RiotGamesAPI.querySummonerInfo(summonerID, RiotGamesAPI.Region.REGION_NA), new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+                summonerFactory.setExtraData(response);
+
+                //Add the Summoner object to ArrayList<Summoner>
+                summonerList.add(summonerFactory.getSummoner());
+
+                //Refresh the SummonerAdapter
+                summonerAdapter.updateData(summonerList);
+
+                setProgressBarIndeterminateVisibility(false);
+                etSearch.setEnabled(true);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                RiotGamesAPI.logInfo(summonerID + " summoner details request failed!!");
+
+                //Add the Summoner object to ArrayList<Summoner>
+                summonerList.add(summonerFactory.getSummoner());
+
+                //Refresh the SummonerAdapter
+                summonerAdapter.updateData(summonerList);
+
+                setProgressBarIndeterminateVisibility(false);
+                etSearch.setEnabled(true);
+            }
+        });
+    }
 
 
     @Override

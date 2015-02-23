@@ -18,7 +18,6 @@ import org.json.JSONObject;
  */
 public class SummonerFactory {
 
-    JSONObject jsonObject;
     Summoner summoner;
 
     public SummonerFactory(JSONObject jsonObject) {
@@ -37,27 +36,16 @@ public class SummonerFactory {
 
         summoner.setProfileIconID(object.optInt("profileIconId"));
         RiotGamesAPI.logInfo("Profile Icon ID: " + summoner.getProfileIconID());
-
-        retrieveMoreData(RiotGamesAPI.querySummonerInfo(summoner.getID(), RiotGamesAPI.Region.REGION_NA));
-        MainActivity.summonerAdapter.updateData(MainActivity.summonerList);
-    }
-
-    public void setObject(JSONObject jsonObject) {
-        this.jsonObject = jsonObject;
     }
 
     public Summoner getSummoner() {
         return summoner;
     }
 
-    private void retrieveMoreData(String searchString) {
+    //Adds detailed information to the Summoner object.
+    public void setExtraData(JSONObject jsonObject) {
 
-        MainActivity.client.get(searchString, new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-
-                JSONArray jsonArray = response.optJSONArray("" + summoner.getID());
+                JSONArray jsonArray = jsonObject.optJSONArray("" + summoner.getID());
 
                 JSONObject summonerObject = jsonArray.optJSONObject(0);
 
@@ -72,16 +60,5 @@ public class SummonerFactory {
                 RiotGamesAPI.logInfo("Tier: " + summoner.getTier());
                 RiotGamesAPI.logInfo("League Points: " + summoner.getLP());
                 RiotGamesAPI.logInfo("Wins: " + summoner.getWins());
-
-                MainActivity.summonerAdapter.updateData(MainActivity.summonerList);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-
-                throwable.printStackTrace();
-                RiotGamesAPI.logInfo(throwable.getMessage());
-            }
-        });
     }
 }

@@ -1,98 +1,59 @@
 package com.thelastcouncil.lolfiend;
 
 import android.content.Context;
-import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.Toast;
-
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
  * Created by Raff on 10/5/2014.
  */
 public class MatchFactory {
+    private Match match;
 
-    JSONObject jsonObject;
-    Context context;
-    int summonerId;
-    Match match;
+    public MatchFactory(JSONObject jsonObject) {
+        JSONArray games = jsonObject.optJSONArray("games");
+        JSONObject latestGame = games.optJSONObject(0);
 
-    public MatchFactory(Context context, int summonerId) {
+        //Initializing the match object with the response information.
+        if(latestGame != null) {
+            RiotGamesAPI.logInfo("Match data found.");
+            match = new Match(latestGame.optLong("gameId"));
+            RiotGamesAPI.logInfo("Game ID: " + match.getGameID());
+            match.setCreateDate(latestGame.optLong("createDate"));
+            RiotGamesAPI.logInfo("create Date: " + match.getCreateDate());
+            match.setChampionID(latestGame.optInt("championId"));
+            RiotGamesAPI.logInfo("Champion ID: " + match.getChampionID());
+            if (latestGame.optString("subType").equalsIgnoreCase("none")) {
+                match.setSubType(latestGame.optString("gameMode"));
+            } else {
+                match.setSubType(latestGame.optString("subType"));
+            }
+            RiotGamesAPI.logInfo("Sub Type: " + match.getSubType());
+            match.setSummonerSpell1(latestGame.optInt("spell1"));
+            RiotGamesAPI.logInfo("Summoner Spell1: " + match.getSummonerSpell1());
+            match.setSummonerSpell2(latestGame.optInt("spell2"));
+            RiotGamesAPI.logInfo("SummonerSpell2: " + match.getSummonerSpell2());
 
-        this.summonerId = summonerId;
-        this.context = context;
+            JSONObject stats = latestGame.optJSONObject("stats");
+            match.setLevel(stats.optInt("level"));
+            RiotGamesAPI.logInfo("Level: " + match.getLevel());
+            match.setKills(stats.optInt("championsKilled"));
+            RiotGamesAPI.logInfo("Kills: " + match.getKills());
+            match.setDeaths(stats.optInt("numDeaths"));
+            RiotGamesAPI.logInfo("Deaths: " + match.getDeaths());
+            match.setAssists(stats.optInt("assists"));
+            RiotGamesAPI.logInfo("Assists: " + match.getAssists());
+            match.setGold(stats.optInt("goldEarned"));
+            RiotGamesAPI.logInfo("Gold Earned: " + match.getGold());
+            match.setMinions(stats.optInt("minionsKilled"));
+            RiotGamesAPI.logInfo("Minions Killed: " + match.getMinions());
+            match.setWin(stats.optBoolean("win"));
+            RiotGamesAPI.logInfo("Win: " + match.isWin());
+        }
     }
 
-    public void setSummonerID(int id) {
-        summonerId = id;
-    }
 
     public Match getMatch() {
-        retrieveMatchData();
         return this.match;
     }
-
-    private void retrieveMatchData() {
-
-        MainActivity.client.get(context, RiotGamesAPI.queryRecentGameInfo(summonerId, RiotGamesAPI.Region.REGION_NA), new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject response) {
-
-                JSONArray games = response.optJSONArray("games");
-                JSONObject latestGame = games.optJSONObject(0);
-
-                //Initializing the match object with the response information.
-                if(latestGame != null) {
-                    RiotGamesAPI.logInfo("MATCH DATA FOUND!!!");
-                    match = new Match(latestGame.optLong("gameId"));
-                    //TODO: summoner.setRecentMatch(match.getGameID()); after returning match!!
-                    RiotGamesAPI.logInfo("Game ID: " + match.getGameID());
-                    match.setCreateDate(latestGame.optLong("createDate"));
-                    RiotGamesAPI.logInfo("create Date: " + match.getCreateDate());
-                    match.setChampionID(latestGame.optInt("championId"));
-                    RiotGamesAPI.logInfo("Champion ID: " + match.getChampionID());
-                    if (latestGame.optString("subType").equalsIgnoreCase("none")) {
-                        match.setSubType(latestGame.optString("gameMode"));
-                    } else {
-                        match.setSubType(latestGame.optString("subType"));
-                    }
-                    RiotGamesAPI.logInfo("Sub Type: " + match.getSubType());
-                    match.setSummonerSpell1(latestGame.optInt("spell1"));
-                    RiotGamesAPI.logInfo("Summoner Spell1: " + match.getSummonerSpell1());
-                    match.setSummonerSpell2(latestGame.optInt("spell2"));
-                    RiotGamesAPI.logInfo("SummonerSpell2: " + match.getSummonerSpell2());
-
-                    JSONObject player = latestGame.optJSONObject("stats");
-                    match.setLevel(player.optInt("level"));
-                    RiotGamesAPI.logInfo("Level: " + match.getLevel());
-                    match.setKills(player.optInt("championsKilled"));
-                    RiotGamesAPI.logInfo("Kills: " + match.getKills());
-                    match.setDeaths(player.optInt("numDeaths"));
-                    RiotGamesAPI.logInfo("Deahs: " + match.getDeaths());
-                    match.setAssists(player.optInt("assists"));
-                    RiotGamesAPI.logInfo("Assists: " + match.getAssists());
-                    match.setGold(player.optInt("goldEarned"));
-                    RiotGamesAPI.logInfo("Gold Earned: " + match.getGold());
-                    match.setMinions(player.optInt("minionsKilled"));
-                    RiotGamesAPI.logInfo("Minions Killed: " + match.getMinions());
-                    match.setWin(player.optBoolean("win"));
-                    RiotGamesAPI.logInfo("Win: " + match.isWin());
-                }
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
-                super.onFailure(statusCode, e, errorResponse);
-            }
-
-
-        });
-    }
-
 }
