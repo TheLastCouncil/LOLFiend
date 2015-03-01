@@ -26,14 +26,28 @@ public class Summoner extends SugarRecord<Summoner> implements Parcelable{
 
     public Summoner(String name) {
         this.id = 0;
+        this.region = "na";
         this.name = name;
-        this.level = 1;
         this.profileIconID = 0;
+        this.level = 1;
         this.league = "Unranked";
         this.tier = "Unranked";
         this.lp = 0;
         this.wins = 0;
         this.recentMatch = 0;
+    }
+
+    public Summoner(int id, String region, String name, int profileIconID, int level, String league, String tier, int lp, int wins, int recentMatch) {
+        this.id = id;
+        this.region = region;
+        this.name = name;
+        this.profileIconID = profileIconID;
+        this.level = 1;
+        this.league = league;
+        this.tier = tier;
+        this.lp = lp;
+        this.wins = wins;
+        this.recentMatch = recentMatch;
     }
 
     public Summoner (Parcel in) {
